@@ -104,9 +104,14 @@ function verificarCambiosRemotos() {
         }
     }
 }
+
 // En scripts.js, añade esto:
 setInterval(() => {
     location.reload();
 }, 10000); // Recarga cada 10 segundos
+        }
+    }
+}
+
 // El resto de tus funciones permanecen igual (agregarPaciente, llamarPaciente, finalizarAtencion, etc.)
 // Solo asegúrate de que todas llamen a guardarDatos() después de modificar datos
