@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Médico Avanzado</title>
+    <style>
+        :root {
+            --color-espera: #FFF3E0;
+            --color-atencion: #E8F5E9;
+            --color-historial: #F5F5F5;
+            --color-urgente: #FFEBEE;
+            --color-boton: #4285F4;
+            --color-boton-llamar: #34A853;
+            --color-boton-finalizar: #EA4335;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f9f9f9;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.08);
+            padding: 30px;
+            position: relative;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.2rem;
+            position: relative;
+            padding-bottom: 15px;
+        }
+        
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(90deg, #4285F4, #34A853, #EA4335);
+            border-radius: 3px;
+        }
+        
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .input-section {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            flex-grow: 1;
+        }
+        
+        input, select {
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            min-width: 200px;
+            flex-grow: 1;
+            transition: border 0.3s;
+        }
+        
+        input:focus, select:focus {
+            border-color: #4285F4;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.2);
+        }
+        
+        button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-agregar {
+            background-color: var(--color-boton);
+        }
+        
+        .btn-agregar:hover {
+            background-color: #3367d6;
+            transform: translateY(-2px);
+        }
+        
+        .stats-container {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .stats {
+            background: #f8f9fa;
+            padding: 15px 20px;
+            border-radius: 6px;
+            text-align: center;
+            min-width: 180px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+        
+        .stats p {
+            font-size: 1rem;
+            color: #555;
+            margin-bottom: 5px;
+        }
+        
+        .stats span {
+            font-weight: bold;
+            color: #2c3e50;
+            font-size: 1.5rem;
+        }
+        
+        .main-content {
+            display: flex;
+            gap: 30px;
+            margin-top: 20px;
+        }
+        
+        .lists-container {
+            display: flex;
+            gap: 30px;
+            flex: 2;
+        }
+        
+        .list {
+            flex: 1;
+            padding: 20px;
+            border-radius: 8px;
+            min-height: 400px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        #listaEspera {
+            background-color: var(--color-espera);
+            border-top: 4px solid #FFB74D;
+        }
+        
+        #listaAtencion {
+            background-color: var(--color-atencion);
+            border-top: 4px solid #81C784;
+        }
+        
+        .historial-container {
+            flex: 1;
+            background-color: var(--color-historial);
+            border-top: 4px solid #9E9E9E;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            max-height: 800px;
+            overflow-y: auto;
+        }
+        
+        .list h2, .historial-container h2 {
+            margin-bottom: 20px;
+            color: #2c3e50;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+        
+        .list h2::after, .historial-container h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 2px;
+            background: currentColor;
+        }
+        
+        ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        li {
+            padding: 15px;
+            background: white;
+            border-radius: 6px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+        }
+        
+        li:hover {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        .paciente-info {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            flex-grow: 1;
+        }
+        
+        .paciente-nombre {
+            font-weight: 500;
+            color: #2c3e50;
+        }
+        
+        .paciente-detalle {
+            display: flex;
+            gap: 15px;
+            font-size: 0.9rem;
+            color: #666;
+            flex-wrap: wrap;
+        }
+        
+        .badge {
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            align-self: flex-start;
+        }
+        
+        .badge-normal {
+            background-color: #E3F2FD;
+            color: #1976D2;
+        }
+        
+        .badge-urgente {
+            background-color: #FFEBEE;
+            color: #D32F2F;
+        }
+        
+        .badge-obra-social {
+            background-color: #E8F5E9;
+            color: #388E3C;
+        }
+        
+        .badge-monto {
+            background-color: #F3E5F5;
+            color: #8E24AA;
+        }
+        
+        .btn-llamar {
+            background-color: var(--color-boton-llamar);
+            margin-left: 10px;
+        }
+        
+        .btn-llamar:hover {
+            background-color: #2d9244;
+            transform: translateY(-2px);
+        }
+        
+        .btn-finalizar {
+            background-color: var(--color-boton-finalizar);
+            margin-left: 10px;
+        }
+        
+        .btn-finalizar:hover {
+            background-color: #c33429;
+            transform: translateY(-2px);
+        }
+        
+        .urgente {
+            border-left: 4px solid #F44336;
+        }
+        
+        .normal {
+            border-left: 4px solid #2196F3;
+        }
+        
+        .timestamp {
+            font-size: 0.8rem;
+            color: #777;
+        }
+        
+        .historial-item {
+            padding: 12px;
+            background: white;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid #9E9E9E;
+        }
+        
+        .historial-item.atendido {
+            border-left-color: #81C784;
+        }
+        
+        .historial-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+        
+        .historial-paciente {
+            font-weight: 500;
+        }
+        
+        .historial-detalle {
+            font-size: 0.9rem;
+            color: #666;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .audio-control {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            padding: 12px;
+            border-radius: 50%;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            z-index: 100;
+            transition: all 0.3s;
+        }
+        
+        .audio-control:hover {
+            transform: scale(1.1);
+        }
+        
+        .day-separator {
+            background-color: #e0e0e0;
+            padding: 8px 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .day-total {
+            font-weight: normal;
+            color: #666;
+        }
+        
+        .resumen-container {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .resumen-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .resumen-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .resumen-total {
+            font-weight: bold;
+            margin-top: 5px;
+            padding-top: 5px;
+            border-top: 2px solid #9E9E9E;
+        }
+        
+        @media (max-width: 1200px) {
+            .main-content {
+                flex-direction: column;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .lists-container {
+                flex-direction: column;
+            }
+            
+            .header-section {
+                flex-direction: column;
+            }
+            
+            .input-section {
+                width: 100%;
+            }
+            
+            input, select, button {
+                width: 100%;
+            }
+            
+            .stats-container {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏥 Sistema de Gestión Médica</h1>
+        
+        <div class="header-section">
+            <div class="input-section">
+                <input type="text" id="nombrePaciente" placeholder="Nombre completo" required>
+                <input type="text" id="obraSocial" placeholder="Obra social">
+                <input type="number" id="monto" placeholder="Monto" min="0" step="0.01">
+                <select id="prioridad">
+                    <option value="normal">Normal</option>
+                    <option value="urgente">Urgente</option>
+                </select>
+                <button class="btn-agregar" id="agregarBtn">
+                    <span>➕</span> Agregar
+                </button>
+            </div>
+            
+            <div class="stats-container">
+                <div class="stats">
+                    <p>En espera</p>
+                    <span id="contadorEspera">0</span>
+                </div>
+                <div class="stats">
+                    <p>En atención</p>
+                    <span id="contadorAtencion">0</span>
+                </div>
+                <div class="stats">
+                    <p>Atendidos hoy</p>
+                    <span id="contadorAtendidos">0</span>
+                </div>
+                <div class="stats">
+                    <p>Total hoy</p>
+                    <span id="contadorMonto">$0</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="lists-container">
+                <div class="list" id="listaEspera">
+                    <h2><span>⏳</span> En Espera</h2>
+                    <ul id="espera"></ul>
+                </div>
+                
+                <div class="list" id="listaAtencion">
+                    <h2><span>✅</span> En Atención</h2>
+                    <ul id="atencion"></ul>
+                </div>
+            </div>
+            
+            <div class="historial-container">
+                <div class="resumen-container" id="resumenHoy">
+                    <div class="resumen-title">Resumen del día</div>
+                    <div id="resumenObrasSociales"></div>
+                    <div class="resumen-total" id="totalHoy">Total: $0</div>
+                </div>
+                
+                <h2><span>📋</span> Historial de Atendidos</h2>
+                <div id="historial"></div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="audio-control" id="audioControl" title="Activar/Desactivar sonido">
+        🔔
+    </div>
+    
+    <audio id="sonidoLlamada" src="https://assets.mixkit.co/sfx/preview/mixkit-alarm-digital-clock-beep-989.mp3"></audio>
+    
+    <script>
+        // Variables globales
+        let pacientes = {
+            espera: [],
+            atencion: []
+        };
+        
+        let historial = [];
+        let contadorAtendidos = 0;
+        let sonidoActivado = true;
+        let totalHoy = 0;
+        
+        // Elementos del DOM
+        const agregarBtn = document.getElementById('agregarBtn');
+        const audioControl = document.getElementById('audioControl');
+        const sonidoLlamada = document.getElementById('sonidoLlamada');
+        
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            cargarDatos();
+            actualizarContadores();
+            renderizarHistorial();
+            actualizarResumenDiario();
+            
+            agregarBtn.addEventListener('click', agregarPaciente);
+            audioControl.addEventListener('click', toggleSonido);
+            
+            // Enter para agregar paciente
+            document.getElementById('nombrePaciente').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') agregarPaciente();
+            });
+        });
+        
+        // Funciones principales
+        function agregarPaciente() {
+            const nombreInput = document.getElementById('nombrePaciente');
+            const obraSocialInput = document.getElementById('obraSocial');
+            const montoInput = document.getElementById('monto');
+            const nombre = nombreInput.value.trim();
+            const obraSocial = obraSocialInput.value.trim() || "Particular";
+            const monto = parseFloat(montoInput.value) || 0;
+            const prioridad = document.getElementById('prioridad').value;
+            
+            if (!nombre) {
+                alert('Por favor ingresa un nombre válido');
+                return;
+            }
+            
+            const nuevoPaciente = {
+                id: Date.now(),
+                nombre,
+                obraSocial,
+                monto,
+                prioridad,
+                horaRegistro: new Date().toLocaleTimeString(),
+                fechaRegistro: new Date().toLocaleDateString()
+            };
+            
+            pacientes.espera.push(nuevoPaciente);
+            guardarDatos();
+            renderizarListas();
+            
+            // Limpiar inputs
+            nombreInput.value = '';
+            obraSocialInput.value = '';
+            montoInput.value = '';
+            nombreInput.focus();
+        }
+        
+        function llamarPaciente(id) {
+            const pacienteIndex = pacientes.espera.findIndex(p => p.id === id);
+            
+            if (pacienteIndex !== -1) {
+                const [paciente] = pacientes.espera.splice(pacienteIndex, 1);
+                paciente.horaLlamado = new Date().toLocaleTimeString();
+                pacientes.atencion.push(paciente);
+                
+                if (sonidoActivado) {
+                    sonidoLlamada.currentTime = 0;
+                    sonidoLlamada.play();
+                }
+                
+                guardarDatos();
+                renderizarListas();
+            }
+        }
+        
+        function finalizarAtencion(id) {
+            const pacienteIndex = pacientes.atencion.findIndex(p => p.id === id);
+            
+            if (pacienteIndex !== -1) {
+                const [paciente] = pacientes.atencion.splice(pacienteIndex, 1);
+                paciente.horaFinalizacion = new Date().toLocaleTimeString();
+                paciente.fechaFinalizacion = new Date().toLocaleDateString();
+                
+                // Agregar al historial
+                historial.unshift(paciente); // Agregar al inicio
+                if (historial.length > 50) historial.pop(); // Limitar a 50 registros
+                
+                contadorAtendidos++;
+                totalHoy += paciente.monto || 0;
+                
+                document.getElementById('contadorAtendidos').textContent = contadorAtendidos;
+                document.getElementById('contadorMonto').textContent = `$${totalHoy.toFixed(2)}`;
+                
+                guardarDatos();
+                renderizarListas();
+                renderizarHistorial();
+                actualizarResumenDiario();
+                localStorage.setItem('contadorAtendidos', contadorAtendidos);
+                localStorage.setItem('totalHoy', totalHoy);
+            }
+        }
+        
+        // Funciones de renderizado
+        function renderizarListas() {
+            renderizarLista('espera', pacientes.espera, true);
+            renderizarLista('atencion', pacientes.atencion, false);
+            actualizarContadores();
+        }
+        
+        function renderizarLista(idLista, listaPacientes, mostrarBotonLlamar) {
+            const ul = document.getElementById(idLista);
+            ul.innerHTML = '';
+            
+            listaPacientes.forEach(paciente => {
+                const li = document.createElement('li');
+                li.className = paciente.prioridad;
+                
+                li.innerHTML = `
+                    <div class="paciente-info">
+                        <div class="paciente-nombre">${paciente.nombre}</div>
+                        <div class="paciente-detalle">
+                            <span>${paciente.obraSocial}</span>
+                            ${paciente.monto > 0 ? `<span class="badge badge-monto">$${paciente.monto.toFixed(2)}</span>` : ''}
+                            <span class="badge badge-${paciente.prioridad}">${paciente.prioridad.toUpperCase()}</span>
+                            <span class="timestamp">Registro: ${paciente.horaRegistro}</span>
+                            ${paciente.horaLlamado ? `<span class="timestamp">Llamado: ${paciente.horaLlamado}</span>` : ''}
+                        </div>
+                    </div>
+                    ${mostrarBotonLlamar ? 
+                        `<button class="btn-llamar" onclick="llamarPaciente(${paciente.id})">Llamar</button>` : 
+                        `<button class="btn-finalizar" onclick="finalizarAtencion(${paciente.id})">Finalizar</button>`}
+                `;
+                
+                ul.appendChild(li);
+            });
+        }
+        
+        function renderizarHistorial() {
+            const historialContainer = document.getElementById('historial');
+            historialContainer.innerHTML = '';
+            
+            if (historial.length === 0) {
+                historialContainer.innerHTML = '<p style="text-align: center; color: #777;">No hay registros de atención aún</p>';
+                return;
+            }
+            
+            let currentDate = '';
+            
+            historial.forEach(paciente => {
+                const pacienteDate = paciente.fechaFinalizacion;
+                
+                // Agregar separador por día
+                if (pacienteDate !== currentDate) {
+                    currentDate = pacienteDate;
+                    
+                    // Calcular total del día
+                    const totalDia = historial
+                        .filter(p => p.fechaFinalizacion === currentDate)
+                        .reduce((sum, p) => sum + (p.monto || 0), 0);
+                    
+                    const daySeparator = document.createElement('div');
+                    daySeparator.className = 'day-separator';
+                    daySeparator.innerHTML = `
+                        <span>${currentDate}</span>
+                        <span class="day-total">Total: $${totalDia.toFixed(2)}</span>
+                    `;
+                    historialContainer.appendChild(daySeparator);
+                }
+                
+                const item = document.createElement('div');
+                item.className = 'historial-item atendido';
+                
+                item.innerHTML = `
+                    <div class="historial-header">
+                        <div class="historial-paciente">${paciente.nombre}</div>
+                        <div class="timestamp">${paciente.horaFinalizacion}</div>
+                    </div>
+                    <div class="historial-detalle">
+                        <span>${paciente.obraSocial}</span>
+                        ${paciente.monto > 0 ? `<span class="badge badge-monto">$${paciente.monto.toFixed(2)}</span>` : ''}
+                        <span class="badge badge-${paciente.prioridad}">${paciente.prioridad.toUpperCase()}</span>
+                        <span class="badge badge-obra-social">OBRA SOCIAL</span>
+                    </div>
+                `;
+                
+                historialContainer.appendChild(item);
+            });
+        }
+        
+        function actualizarResumenDiario() {
+            const hoy = new Date().toLocaleDateString();
+            const pacientesHoy = historial.filter(p => p.fechaFinalizacion === hoy);
+            
+            // Agrupar por obra social
+            const obrasSociales = {};
+            pacientesHoy.forEach(paciente => {
+                if (!obrasSociales[paciente.obraSocial]) {
+                    obrasSociales[paciente.obraSocial] = {
+                        count: 0,
+                        total: 0
+                    };
+                }
+                obrasSociales[paciente.obraSocial].count++;
+                obrasSociales[paciente.obraSocial].total += paciente.monto || 0;
+            });
+            
+            const resumenObrasSociales = document.getElementById('resumenObrasSociales');
+            resumenObrasSociales.innerHTML = '';
+            
+            // Ordenar por total descendente
+            const obrasOrdenadas = Object.entries(obrasSociales).sort((a, b) => b[1].total - a[1].total);
+            
+            obrasOrdenadas.forEach(([obraSocial, datos]) => {
+                const item = document.createElement('div');
+                item.className = 'resumen-item';
+                item.innerHTML = `
+                    <span>${obraSocial}</span>
+                    <span>${datos.count} paciente(s) - $${datos.total.toFixed(2)}</span>
+                `;
+                resumenObrasSociales.appendChild(item);
+            });
+            
+            // Actualizar total del día
+            const totalDia = pacientesHoy.reduce((sum, p) => sum + (p.monto || 0), 0);
+            document.getElementById('totalHoy').textContent = `Total: $${totalDia.toFixed(2)}`;
+        }
+        
+        function actualizarContadores() {
+            document.getElementById('contadorEspera').textContent = pacientes.espera.length;
+            document.getElementById('contadorAtencion').textContent = pacientes.atencion.length;
+        }
+        
+        function toggleSonido() {
+            sonidoActivado = !sonidoActivado;
+            audioControl.textContent = sonidoActivado ? '🔔' : '🔕';
+            audioControl.title = sonidoActivado ? 'Sonido activado' : 'Sonido desactivado';
+        }
+        
+        // Persistencia de datos
+        function guardarDatos() {
+            localStorage.setItem('pacientes', JSON.stringify(pacientes));
+            localStorage.setItem('historial', JSON.stringify(historial));
+        }
+        
+        function cargarDatos() {
+            const datosPacientes = localStorage.getItem('pacientes');
+            const datosHistorial = localStorage.getItem('historial');
+            const contadorGuardado = localStorage.getItem('contadorAtendidos');
+            const totalGuardado = localStorage.getItem('totalHoy');
+            
+            if (datosPacientes) pacientes = JSON.parse(datosPacientes);
+            if (datosHistorial) historial = JSON.parse(datosHistorial);
+            if (contadorGuardado) {
+                contadorAtendidos = parseInt(contadorGuardado);
+                document.getElementById('contadorAtendidos').textContent = contadorAtendidos;
+            }
+            if (totalGuardado) {
+                totalHoy = parseFloat(totalGuardado);
+                document.getElementById('contadorMonto').textContent = `$${totalHoy.toFixed(2)}`;
+            }
+            
+            renderizarListas();
+        }
+    </script>
+</body>
+</html>
